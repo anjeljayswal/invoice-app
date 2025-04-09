@@ -1,7 +1,7 @@
 // components/AddCustomerForm.tsx
 'use client'
 
-import { add } from 'date-fns'
+// import { add } from 'date-fns'
 import { useState } from 'react'
 
 export default function AddCustomerForm() {
@@ -45,7 +45,7 @@ export default function AddCustomerForm() {
     className="bg-gradient-to-br from-blue-50 to-indigo-100 p-8 rounded-2xl shadow-xl w-full max-w-md mx-auto border border-white/20 backdrop-blur-sm"
   >
     <div className="text-center mb-8">
-      <h2 className="text-3xl font-extrabold text-gray-800 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+      <h2 className="text-3xl font-extrabold text-gray-800 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text">
         Add New Customer
       </h2>
       <p className="mt-2 text-sm text-gray-500">Fill in the details to create a new customer profile</p>
