@@ -3,21 +3,16 @@ import React, { useCallback, useEffect, useState } from 'react';
 import AddCustomerForm from '../component/AddCustomerForm';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-
-const customers = [
-    { id: 1, name: "John Doe", email: "john@example.com" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com" },
-    { id: 3, name: "Alice Johnson", email: "alice@example.com" },
-];
+import { User, Customer } from '../types/typesScript';
 
 const Page = () => {
     const { data: session, status } = useSession();
     const [isFormVisible, setIsFormVisible] = useState(false);
     const userId = session?.user?.id || null; // Get user ID from session
     console.log("userId from session: ", userId);
-
+    const [customers, setCustomers] = useState<Customer[]>([]); // Initialize customers state
     const router = useRouter();
-    const [userData, setUserData] = useState(null);
+    const [userData, setUserData] = useState<User[] | null>(null); // Initialize userData state
     useEffect(() => {
         if (status === 'unauthenticated') {
             router.push('/'); // redirect to home if not logged in
@@ -26,14 +21,15 @@ const Page = () => {
 
     const fetchUser = useCallback(async () => {
         try {
-          const response = await fetch(`/api/user?userId=${userId}`);
-          const data = await response.json();
-          console.log("Fetched user data:", data);
-          setUserData(data);
+            const response = await fetch(`/api/user?userId=${userId}`);
+            const data = await response.json();
+            console.log("Fetched user data:", data);
+            setUserData(data);
+            setCustomers(data.customers); // Set customers state with fetched data
         } catch (err) {
-          console.error("Fetch error:", err);
+            console.error("Fetch error:", err);
         }
-      }, [userId]);
+    }, [userId]);
     useEffect(() => {
         if (userId) {
             fetchUser();
@@ -99,7 +95,8 @@ const Page = () => {
                         >
                             ✕
                         </button>
-                        <AddCustomerForm userId={userId || ''} setIsFormVisible={setIsFormVisible} />
+                        <AddCustomerForm userId={userId || ''} setIsFormVisible={setIsFormVisible} refetch={fetchUser} // ✅ pass fetchUser
+                        />
                     </div>
                 </div>
             )}
