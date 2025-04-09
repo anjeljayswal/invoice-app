@@ -4,6 +4,7 @@ import AddCustomerForm from '../component/AddCustomerForm';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { User, Customer } from '../types/typesScript';
+import Link from 'next/link';
 
 const Page = () => {
     const { data: session, status } = useSession();
@@ -77,7 +78,10 @@ const Page = () => {
                         <tbody>
                             {customers.map((customer) => (
                                 <tr key={customer.id} className="hover:bg-gray-50">
-                                    <td className="px-4 py-2 border-b">{customer.name}</td>
+                                    <td className="px-4 py-2 border-b"> 
+                                        <Link href={`/dashboard/${customer.id}`} className="text-blue-600 hover:underline">
+                                        {customer.name}
+                                    </Link></td>
                                     <td className="px-4 py-2 border-b">{customer.email}</td>
                                 </tr>
                             ))}
