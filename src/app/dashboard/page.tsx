@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AddCustomerForm from '../component/AddCustomerForm';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -14,13 +14,32 @@ const Page = () => {
     const { data: session, status } = useSession();
     const [isFormVisible, setIsFormVisible] = useState(false);
     const userId = session?.user?.id || null; // Get user ID from session
-    const router = useRouter();
+    console.log("userId from session: ", userId);
 
+    const router = useRouter();
+    const [userData, setUserData] = useState(null);
     useEffect(() => {
         if (status === 'unauthenticated') {
             router.push('/'); // redirect to home if not logged in
         }
     }, [status, router]);
+
+    const fetchUser = useCallback(async () => {
+        try {
+          const response = await fetch(`/api/user?userId=${userId}`);
+          const data = await response.json();
+          console.log("Fetched user data:", data);
+          setUserData(data);
+        } catch (err) {
+          console.error("Fetch error:", err);
+        }
+      }, [userId]);
+    useEffect(() => {
+        if (userId) {
+            fetchUser();
+        }
+    }, [userId, fetchUser]);
+    console.log('setUserData: ', userData);
 
     if (status === 'loading') {
         return <div>Loading...</div>;
@@ -36,6 +55,7 @@ const Page = () => {
     const handleCloseForm = () => {
         setIsFormVisible(false);
     };
+
 
     return (
         <div className=''>

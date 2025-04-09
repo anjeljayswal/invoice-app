@@ -35,3 +35,23 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }
+
+export async function GET(req: Request) {
+    try {
+        const url = new URL(req.url)
+        const userId = url.searchParams.get('userId')
+
+        if (!userId) {
+            return NextResponse.json({ error: 'User ID is required.' }, { status: 400 })
+        }
+
+        const customers = await prisma.customer.findMany({
+            where: { userId },
+        })
+
+        return NextResponse.json(customers, { status: 200 })
+    } catch (error) {
+        console.error('Error fetching customers:', error)
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    }
+}
