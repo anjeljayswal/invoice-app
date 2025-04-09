@@ -3,8 +3,12 @@
 
 // import { add } from 'date-fns'
 import { useState } from 'react'
+interface AddCustomerFormProps {
+  userId: string;
+  setIsFormVisible: (isVisible: boolean) => void;
+}
 
-export default function AddCustomerForm() {
+export default function AddCustomerForm({ userId,setIsFormVisible }: AddCustomerFormProps) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [externalCustomerId, setExternalCustomerId] = useState('')
@@ -18,7 +22,7 @@ export default function AddCustomerForm() {
 
     const res = await fetch('/api/customer', {
       method: 'POST',
-      body: JSON.stringify({ name, email, externalCustomerId, address, phoneNo }),
+      body: JSON.stringify({ name, email, externalCustomerId, address, phoneNo,userId }),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -33,6 +37,7 @@ export default function AddCustomerForm() {
 
         setAddress('')
         setPhoneNo('')
+        setIsFormVisible(false)
 
     } else {
       setMessage(`Error: ${data.error}`)
