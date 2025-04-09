@@ -16,7 +16,7 @@ export default function AddCustomerForm() {
   const handleSubmit = async (e: any) => {
     e.preventDefault()
 
-    const res = await fetch('/api/customers', {
+    const res = await fetch('/api/customer', {
       method: 'POST',
       body: JSON.stringify({ name, email, externalCustomerId, address, phoneNo }),
       headers: {
