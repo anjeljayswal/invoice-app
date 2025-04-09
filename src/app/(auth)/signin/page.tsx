@@ -27,7 +27,9 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 shadow-md rounded-md border">
+    <>
+    <div className='min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 flex items-center justify-center'>
+    <div className="max-w-md mx-auto p-4 shadow-md rounded-md border">
       <h2 className="text-xl font-semibold mb-4">Sign In</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
@@ -52,5 +54,7 @@ export default function SignInPage() {
         </button>
       </form>
     </div>
+    </div>
+    </>
   );
 }

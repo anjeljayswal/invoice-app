@@ -28,7 +28,9 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 shadow-md rounded-md border">
+    <>
+    <div className='min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 flex items-center justify-center'>
+    <div className="max-w-md mx-auto p-4 shadow-md rounded-md border">
       <h2 className="text-xl font-semibold mb-4">Sign Up</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
@@ -56,10 +58,13 @@ export default function SignUpPage() {
           required
         />
         {error && <p className="text-red-500 text-sm">{error}</p>}
-        <button type="submit" className="w-full bg-green-600 text-white p-2 rounded">
+        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded">
           Sign Up
         </button>
       </form>
     </div>
+    </div>
+    </>
+    
   );
 }
