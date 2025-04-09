@@ -9,7 +9,7 @@ const CustomerPage = () => {
   const { id } = useParams();
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-const [visbleInvoice, setVisibleInvoice] = useState(false);
+  const [visbleInvoice, setVisibleInvoice] = useState(false);
   const [invoices, setInvoices] = useState<Invoice[]>([]); // Adjust the type as needed
   useEffect(() => {
     const fetchCustomer = async () => {
@@ -30,11 +30,26 @@ const [visbleInvoice, setVisibleInvoice] = useState(false);
     }
   }, [id]);
 
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      try {
+        const res = await fetch(`/api/invoice?customerId=${id}`);
+        if (!res.ok) throw new Error('Failed to fetch invoices');
+        const data: Invoice[] = await res.json();
+        setInvoices(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    if (id) {
+      fetchInvoices();
+    }
+  }, [id]);
   if (loading) return <div>Loading...</div>;
   if (!customer) return <div>Customer not found</div>;
   {/* Add Invoice Click Handler */ }
   const handleAddInvoiceClick = () => {
-   setVisibleInvoice(true);
+    setVisibleInvoice(true);
   };
   return (
     <div className="p-6">
@@ -69,14 +84,17 @@ const [visbleInvoice, setVisibleInvoice] = useState(false);
             ))}
           </ul>
         )}
-        </div>
+      </div>
 
       {/* Add Invoice Form */}
       {visbleInvoice && (
         <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-4">Add Invoice</h2>
           {/* Add your invoice form component here */}
-          {id && <AddInvoiceForm customerId={id as string} setIsFormVisible={setVisibleInvoice} refetch={() => { invoices }} />}
+          {id && <AddInvoiceForm customerId={id as string}
+            onSuccess={setVisibleInvoice}
+            refetch={() => { invoices }}
+          />}
           <button
             className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 mt-4"
             onClick={() => setVisibleInvoice(false)}

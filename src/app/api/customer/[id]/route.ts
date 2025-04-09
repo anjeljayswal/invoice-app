@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
   try {
     const customer = await prisma.customer.findUnique({
       where: { id },
+      include: { invoices: true }, // Include related invoices if needed
     });
 
     if (!customer) {

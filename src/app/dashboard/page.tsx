@@ -34,6 +34,7 @@ const Page = () => {
             console.error("Fetch error:", err);
         }
     }, [userId]);
+    console.log('setCustomers: ', setCustomers);
 
     useEffect(() => {
         if (userId) {
