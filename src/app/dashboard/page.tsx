@@ -1,6 +1,8 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AddCustomerForm from '../component/AddCustomerForm';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const customers = [
     { id: 1, name: "John Doe", email: "john@example.com" },
@@ -9,7 +11,23 @@ const customers = [
 ];
 
 const Page = () => {
+    const { data: session, status } = useSession();
     const [isFormVisible, setIsFormVisible] = useState(false);
+
+    const router = useRouter();
+  
+    useEffect(() => {
+      if (status === 'unauthenticated') {
+        router.push('/'); // redirect to home if not logged in
+      }
+    }, [status, router]);
+  
+    if (status === 'loading') {
+      return <div>Loading...</div>;
+    }
+  
+    if (!session) return null;
+  
 
     const handleAddCustomerClick = () => {
         setIsFormVisible(true);
@@ -20,9 +38,9 @@ const Page = () => {
     };
 
     return (
-        <div>
+        <div className=''>
             <div className="p-6 space-y-6">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mt-20">
                     <h1 className="text-2xl font-bold">Customers</h1>
                     <button
                         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
