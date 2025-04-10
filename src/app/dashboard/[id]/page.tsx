@@ -99,8 +99,8 @@ const CustomerPage = () => {
       console.error(error);
     }
   };
-  
-   
+
+
   const handleDelete = (id: string) => {
     console.log("Delete invoice with ID:", id);
     // Add your delete logic here
@@ -113,7 +113,7 @@ const CustomerPage = () => {
         setInvoices((prev) => prev.filter((invoice) => invoice.id !== id));
       })
       .catch((error) => console.error(error));
-      
+
   };
 
   const handlePrint = (invoice: Invoice) => {
@@ -122,7 +122,7 @@ const CustomerPage = () => {
     window.print();
   };
   return (
-    <div className="p-6">
+    <div className="sm:p-36 px-5 py-20">
       <h1 className="text-2xl font-bold mb-4">{customer.name}</h1>
       <p><strong>Email:</strong> {customer.email}</p>
       <p><strong>Phone:</strong> {customer.phone}</p>
@@ -131,133 +131,52 @@ const CustomerPage = () => {
       {/* Customer List Header */}
       <div className="flex items-center justify-between mt-10">
         <h2 className="text-2xl font-bold">Invoice List</h2>
-        <button
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          onClick={handleAddInvoiceClick}
-        >
-          + Add Invoice
-        </button>
+        <div className='flex gap-2'>
+          <button
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            onClick={handleAddInvoiceClick}
+          >
+            + Add Invoice
+          </button>
+          <button onClick={() => invoices.length > 0 && handlePrint(invoices[0])} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-blue-700">Print</button>
+        </div>
       </div>
       {/* Invoice List */}
       <div className="mt-4">
         {invoices.length === 0 ? (
           <p>No invoices found for this customer.</p>
         ) : (
-          // <ul className="space-y-4">
-          //   {invoices.map((invoice) => (
-          //     <li key={invoice.id} className="bg-white shadow rounded-xl p-4">
-          //       {/* <h3 className="text-lg font-semibold">{invoice.title}</h3> */}
-          //       <p><strong>Amount:</strong> Rs {invoice.amount}</p>
-          //       <p><strong>Status:</strong> {invoice.status}</p>
-          //       {/* Add other fields as needed */}
-          //       <p><strong>Due Date:</strong> {new Date(invoice.dueDate).toLocaleDateString()}</p>
 
-          //     </li>
-          //   ))}
-          // </ul>
-          <table className="min-w-full bg-white shadow rounded-xl overflow-hidden">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="text-left px-6 py-3 text-sm font-semibold">ID</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold">Invoice Number</th>
-
-
-                <th className="text-left px-6 py-3 text-sm font-semibold">Amount</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold">Status</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold">Due Date</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {invoices.map((invoice) => (
-                <tr key={invoice.id}>
-                  <td className="px-6 py-4">{invoice.id.slice(0, 8)}</td>
-                  <td className="px-6 py-4">{invoice.invoiceNumber}</td>
-
-                  <td className="px-6 py-4">Rs {invoice.amount}</td>
-                  <td className="px-6 py-4">{invoice.status}</td>
-                  <td className="px-6 py-4">{new Date(invoice.dueDate).toLocaleDateString()}</td>
-                  <td className="px-6 py-4 flex gap-2">
-                    <button
-                      onClick={() => handleEdit(invoice.id)}
-                      className="text-blue-600 hover:underline"
-                    >
-                      Edit
-                    </button>
-
-                    {isEditModalOpen && (
-                      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                        <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-lg">
-                          <h2 className="text-xl font-bold mb-4">Edit Invoice</h2>
-
-                          <div className="mb-3">
-                            <label className="block text-sm font-medium mb-1">Amount</label>
-                            <input
-                              type="number"
-                              name="amount"
-                              value={formData.amount}
-                              onChange={handleChange}
-                              className="w-full border rounded px-3 py-2"
-                            />
-                          </div>
-
-                          <div className="mb-3">
-                            <label className="block text-sm font-medium mb-1">Status</label>
-                            <input
-                              type="text"
-                              name="status"
-                              value={formData.status}
-                              onChange={handleChange}
-                              className="w-full border rounded px-3 py-2"
-                            />
-                          </div>
-
-                          <div className="mb-4">
-                            <label className="block text-sm font-medium mb-1">Due Date</label>
-                            <input
-                              type="date"
-                              name="dueDate"
-                              value={formData.dueDate}
-                              onChange={handleChange}
-                              className="w-full border rounded px-3 py-2"
-                            />
-                          </div>
-
-                          <div className="flex justify-end gap-3">
-                            <button
-                              onClick={() => setIsEditModalOpen(false)}
-                              className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              onClick={handleUpdate}
-                              className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
-                            >
-                              Save
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    <button
-                      onClick={() => handleDelete(invoice.id)}
-                      className="text-red-600 hover:underline"
-                    >
-                      Delete
-                    </button>
-                    <button
-                      onClick={() => handlePrint(invoice)}
-                      className="text-green-600 hover:underline"
-                    >
-                      Print
-                    </button>
-                  </td>
+          <div className="overflow-x-auto w-full">
+            <table className="min-w-full bg-white shadow rounded-xl overflow-hidden">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="text-left px-6 py-3 text-sm font-semibold">ID</th>
+                  <th className="text-left px-6 py-3 text-sm font-semibold">Invoice Number</th>
+                  <th className="text-left px-6 py-3 text-sm font-semibold">Amount</th>
+                  <th className="text-left px-6 py-3 text-sm font-semibold">Status</th>
+                  <th className="text-left px-6 py-3 text-sm font-semibold">Due Date</th>
+                  <th className="text-left px-6 py-3 text-sm font-semibold">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {invoices.map((invoice) => (
+                  <tr key={invoice.id}>
+                    <td className="px-6 py-4">{invoice.id.slice(0, 8)}</td>
+                    <td className="px-6 py-4">{invoice.invoiceNumber}</td>
+                    <td className="px-6 py-4">Rs {invoice.amount}</td>
+                    <td className="px-6 py-4">{invoice.status}</td>
+                    <td className="px-6 py-4">{new Date(invoice.dueDate).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 flex gap-2 flex-wrap">
+                      <button onClick={() => handleEdit(invoice.id)} className="text-blue-600 hover:underline">Edit</button>
+                      <button onClick={() => handleDelete(invoice.id)} className="text-red-600 hover:underline">Delete</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
         )}
       </div>
 
