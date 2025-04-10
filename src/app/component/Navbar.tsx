@@ -6,6 +6,9 @@ import { FC, useEffect, useState } from 'react';
 const Navbar: FC = () => {
   const { data: session, status } = useSession();
   const [isMounted, setIsMounted] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -33,40 +36,95 @@ const Navbar: FC = () => {
                   clipRule="evenodd"
                 />
               </svg>
-              <span className="ml-2 text-xl font-bold text-gray-800">InvoicePro</span>
+              <span className="ml-2 text-xl font-bold text-gray-800 hidden sm:block">InvoicePro</span>
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="relative flex items-center space-x-4">
+            {/* Desktop view */}
             {status === 'loading' ? (
               <span className="text-gray-500">Loading...</span>
-            ) : session?.user ? (
-              <>
-                <span className="text-gray-700">Hi, {session.user.name || session.user.email}</span>
-                <button
-                  className="px-4 py-2 text-red-600 font-medium rounded-lg hover:bg-red-50 transition duration-300"
-                  onClick={handleSignOut}
-                >
-                  Logout
-                </button>
-              </>
             ) : (
               <>
-                <button
-                  className="px-4 py-2 text-indigo-600 font-medium rounded-lg hover:bg-indigo-50 transition duration-300"
-                  onClick={handleSignIn}
-                >
-                  Sign In
-                </button>
-                <button
-                  className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-lg hover:shadow-md transition duration-300"
-                  onClick={handleSignIn}
-                >
-                  Sign Up
-                </button>
+                {/* Desktop - show user info and buttons */}
+                {session?.user && (
+                  <span className="text-gray-700 hidden sm:inline">
+                    Hi, {session.user.name || session.user.email}
+                  </span>
+                )}
+
+                {session?.user ? (
+                  <button
+                    className="hidden sm:inline-block px-4 py-2 text-red-600 font-medium rounded-lg hover:bg-red-50 transition"
+                    onClick={handleSignOut}
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      className="hidden sm:inline-block px-4 py-2 text-indigo-600 font-medium rounded-lg hover:bg-indigo-50 transition"
+                      onClick={handleSignIn}
+                    >
+                      Sign In
+                    </button>
+                    <button
+                      className="hidden sm:inline-block px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-lg hover:shadow-md transition"
+                      onClick={handleSignIn}
+                    >
+                      Sign Up
+                    </button>
+                  </>
+                )}
+
+                {/* Mobile menu icon */}
+                <div className="sm:hidden relative">
+                  <button
+                    onClick={toggleMenu}
+                    className="text-2xl text-indigo-600"
+                    aria-label="Toggle menu"
+                  >
+                    ☰
+                  </button>
+
+                  {/* Dropdown for mobile */}
+                  {isMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg py-2 z-50">
+                      {session?.user ? (
+                        <>
+                          <div className="px-4 py-2 text-gray-700 font-medium">
+                            Hi, {session.user.name || session.user.email}
+                          </div>
+                          <button
+                            onClick={handleSignOut}
+                            className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
+                          >
+                            Logout
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            onClick={handleSignIn}
+                            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                          >
+                            Sign In
+                          </button>
+                          <button
+                            onClick={handleSignIn}
+                            className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                          >
+                            Sign Up
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
               </>
             )}
           </div>
+
         </div>
       </div>
     </nav>
