@@ -7,11 +7,21 @@ import { fetchData } from 'next-auth/client/_utils';
 
 const CustomerPage = () => {
   const { id } = useParams();
+  console.log('id: ', id);
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [visbleInvoice, setVisibleInvoice] = useState(false);
   const [invoices, setInvoices] = useState<Invoice[]>([]); // Adjust the type as needed
   console.log('invoices: ', invoices);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState<string | null>(null);
+
+  // For controlled form inputs
+  const [formData, setFormData] = useState({
+    amount: '',
+    status: '',
+    dueDate: ''
+  });
   useEffect(() => {
     const fetchCustomer = async () => {
       try {
@@ -54,9 +64,43 @@ const CustomerPage = () => {
   };
   const handleEdit = (id: string) => {
     console.log("Edit invoice with ID:", id);
-    // Add your edit logic here
+    const invoiceToEdit = invoices.find((invoice) => invoice.id === id);
+    if (invoiceToEdit) {
+      setFormData({
+        amount: invoiceToEdit.amount.toString(),
+        status: invoiceToEdit.status,
+        dueDate: new Date(invoiceToEdit.dueDate).toISOString().split('T')[0] // Format date for input
+      });
+      setSelectedInvoice(invoiceToEdit.id); // ✅ Set selectedInvoice
+      setIsEditModalOpen(true);
+    }
   };
-
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+  const handleUpdate = async () => {
+    console.log("Updating invoice ID:", selectedInvoice); // 👈 Confirm ID is set
+    try {
+      const res = await fetch(`/api/invoice/${selectedInvoice}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      if (!res.ok) throw new Error('Failed to update invoice');
+      const updatedInvoice = await res.json();
+      setInvoices((prev) =>
+        prev.map((invoice) => (invoice.id === selectedInvoice ? updatedInvoice : invoice))
+      );
+      setIsEditModalOpen(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+   
   const handleDelete = (id: string) => {
     console.log("Delete invoice with ID:", id);
     // Add your delete logic here
@@ -117,7 +161,7 @@ const CustomerPage = () => {
             <tbody className="divide-y divide-gray-200">
               {invoices.map((invoice) => (
                 <tr key={invoice.id}>
-                    <td className="px-6 py-4">{invoice.id.slice(0, 8)}</td>
+                  <td className="px-6 py-4">{invoice.id.slice(0, 8)}</td>
                   <td className="px-6 py-4">{invoice.invoiceNumber}</td>
 
                   <td className="px-6 py-4">Rs {invoice.amount}</td>
@@ -130,6 +174,63 @@ const CustomerPage = () => {
                     >
                       Edit
                     </button>
+
+                    {isEditModalOpen && (
+                      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                        <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-lg">
+                          <h2 className="text-xl font-bold mb-4">Edit Invoice</h2>
+
+                          <div className="mb-3">
+                            <label className="block text-sm font-medium mb-1">Amount</label>
+                            <input
+                              type="number"
+                              name="amount"
+                              value={formData.amount}
+                              onChange={handleChange}
+                              className="w-full border rounded px-3 py-2"
+                            />
+                          </div>
+
+                          <div className="mb-3">
+                            <label className="block text-sm font-medium mb-1">Status</label>
+                            <input
+                              type="text"
+                              name="status"
+                              value={formData.status}
+                              onChange={handleChange}
+                              className="w-full border rounded px-3 py-2"
+                            />
+                          </div>
+
+                          <div className="mb-4">
+                            <label className="block text-sm font-medium mb-1">Due Date</label>
+                            <input
+                              type="date"
+                              name="dueDate"
+                              value={formData.dueDate}
+                              onChange={handleChange}
+                              className="w-full border rounded px-3 py-2"
+                            />
+                          </div>
+
+                          <div className="flex justify-end gap-3">
+                            <button
+                              onClick={() => setIsEditModalOpen(false)}
+                              className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={handleUpdate}
+                              className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     <button
                       onClick={() => handleDelete(invoice.id)}
                       className="text-red-600 hover:underline"
