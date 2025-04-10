@@ -144,17 +144,27 @@ const Page = () => {
                         <tr className="bg-gray-100 text-left">
                             <th className="px-4 py-2 border-b">Name</th>
                             <th className="px-4 py-2 border-b">Email</th>
+                            <th className='px-4 py-2 border-b'>Action</th>
+                            {/* <th className="px-4 py-2 border-b">Invoices</th> */}
                         </tr>
                     </thead>
                     <tbody>
                         {customers.map((customer) => (
                             <tr key={customer.id} className="hover:bg-gray-50">
                                 <td className="px-4 py-2 border-b">
-                                    <Link href={`/dashboard/${customer.id}`} className="text-blue-600 hover:underline">
+                                    {/* <Link href={`/dashboard/${customer.id}`} className="text-blue-600 hover:underline"> */}
                                         {customer.name}
-                                    </Link>
+                                    {/* </Link> */}
                                 </td>
                                 <td className="px-4 py-2 border-b">{customer.email}</td>
+                                <td className="px-4 py-2 border-b">
+                                <Link href={`/dashboard/${customer.id}`} className="text-blue-600 hover:underline">
+
+                                   <button type="button">Open</button>
+                                   </Link>
+
+                                </td>
+
                             </tr>
                         ))}
                     </tbody>
