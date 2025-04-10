@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { User, Customer, Invoice, InvoiceLog } from '../types/typesScript';
 import Link from 'next/link';
+import RevenueChart from '../component/RevenueChart';
 // import { Card, CardContent } from '@/components/ui/card'; // adjust if not using shadcn
 // import { Button } from '@/components/ui/button';
 
@@ -40,23 +41,23 @@ const Page = () => {
 
     const outstandingInvoicess = customers.flatMap(customer =>
         customer.invoices.filter(invoice => {
-          const status = invoice.status?.toLowerCase().trim(); // safe check
-          return status === 'pending' || status === 'past due';
+            const status = invoice.status?.toLowerCase().trim(); // safe check
+            return status === 'pending' || status === 'past due';
         })
-      );
-      
-      console.log('Filtered outstanding invoices:', outstandingInvoicess);
-      
-      const outstandingRevenue = outstandingInvoicess.reduce((sum, invoice) => {
+    );
+
+    console.log('Filtered outstanding invoices:', outstandingInvoicess);
+
+    const outstandingRevenue = outstandingInvoicess.reduce((sum, invoice) => {
         const amount = typeof invoice.amount === 'number' ? invoice.amount : 0;
         return sum + amount;
-      }, 0);
-      
-      console.log('Total outstanding revenue:', outstandingRevenue);
+    }, 0);
+
+    console.log('Total outstanding revenue:', outstandingRevenue);
 
     const totalRevenue = customers.reduce((acc, customer) => {
         const customerTotal = customer.invoices.reduce((sum, invoice) => sum + invoice.amount, 0);
-        
+
         return acc + customerTotal;
     }, 0);
     console.log('totalRevenue', totalRevenue);
@@ -159,7 +160,9 @@ const Page = () => {
             </div>
             {/* Revenue Trend Placeholder */}
             <div className="bg-white rounded-xl shadow p-6 h-64 flex items-center justify-center text-gray-400">
-                Revenue trend chart goes here
+                {/* Revenue trend chart goes here */}
+                <RevenueChart customers={customers} />
+
             </div>
             {/* Modal Form */}
             {isFormVisible && (
