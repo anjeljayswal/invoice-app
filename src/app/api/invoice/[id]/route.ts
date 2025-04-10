@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export async function PUT(
     req: NextRequest,
-    context: { params: { id: string } }
+    context: any
   ) {
     try {
       const { status, dueDate, amount } = await req.json();
@@ -40,7 +40,7 @@ export async function PUT(
 
 export async function DELETE(
     req: NextRequest,
-    context: { params: { id: string } }
+    context: any
   ) {
     try {
       const params = await context.params; // Await context.params
