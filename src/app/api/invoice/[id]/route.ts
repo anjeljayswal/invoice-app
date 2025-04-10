@@ -37,3 +37,22 @@ export async function PUT(
   }
 
 
+
+export async function DELETE(
+    req: NextRequest,
+    context: { params: { id: string } }
+  ) {
+    try {
+      const params = await context.params; // Await context.params
+      const { id } = params; // Access `id` after awaiting `params`
+  
+      const deletedInvoice = await prisma.invoice.delete({
+        where: { id },
+      });
+  
+      return NextResponse.json(deletedInvoice, { status: 200 });
+    } catch (error) {
+      console.error('Error deleting invoice:', error);
+      return NextResponse.json({ error: 'Failed to delete invoice' }, { status: 500 });
+    }
+  }

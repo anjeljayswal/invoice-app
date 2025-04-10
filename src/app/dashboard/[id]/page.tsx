@@ -104,6 +104,16 @@ const CustomerPage = () => {
   const handleDelete = (id: string) => {
     console.log("Delete invoice with ID:", id);
     // Add your delete logic here
+    // Example: Call an API to delete the invoice
+    fetch(`/api/invoice/${id}`, {
+      method: 'DELETE',
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error('Failed to delete invoice');
+        setInvoices((prev) => prev.filter((invoice) => invoice.id !== id));
+      })
+      .catch((error) => console.error(error));
+      
   };
 
   const handlePrint = (invoice: Invoice) => {
