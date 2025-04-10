@@ -12,12 +12,54 @@ const Page = () => {
     const { data: session, status } = useSession();
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [customers, setCustomers] = useState<Customer[]>([]);
+    console.log('customers: ', customers);
     const [userData, setUserData] = useState<User[] | null>(null);
     const [outstandingInvoices, setOutstandingInvoices] = useState<Invoice[]>([]); // example
     const [revenue, setRevenue] = useState(18320); // example
     const userId = session?.user?.id || null;
     const router = useRouter();
+    // const id = customers.id;
+    // const toatalOutsandingInvoices = async () => {
+    //     try {
+    //         const response = await fetch(`/api/invoice?/api/invoice`);
+    //         const data = await response.json();
+    //         const outstanding = data.filter((invoice: Invoice) => invoice.status === 'Pending' || invoice.status === 'Past Due');
+    //         const totalRevenue = data.reduce((acc: number, invoice: Invoice) => acc + invoice.amount, 0);
+    //         setOutstandingInvoices(outstanding);
+    //     }
+    //     catch (err) {
+    //         console.error("Fetch error:", err);
+    //     }
+    // };
+    // useEffect(() => {
+    //     if (userId) {
+    //         toatalOutsandingInvoices();
+    //     }
+    // }, [userId]);
+    // console.log('setOutstandingInvoices: ', outstandingInvoices);
 
+    const outstandingInvoicess = customers.flatMap(customer =>
+        customer.invoices.filter(invoice => {
+          const status = invoice.status?.toLowerCase().trim(); // safe check
+          return status === 'pending' || status === 'past due';
+        })
+      );
+      
+      console.log('Filtered outstanding invoices:', outstandingInvoicess);
+      
+      const outstandingRevenue = outstandingInvoicess.reduce((sum, invoice) => {
+        const amount = typeof invoice.amount === 'number' ? invoice.amount : 0;
+        return sum + amount;
+      }, 0);
+      
+      console.log('Total outstanding revenue:', outstandingRevenue);
+
+    const totalRevenue = customers.reduce((acc, customer) => {
+        const customerTotal = customer.invoices.reduce((sum, invoice) => sum + invoice.amount, 0);
+        
+        return acc + customerTotal;
+    }, 0);
+    console.log('totalRevenue', totalRevenue);
     useEffect(() => {
         if (status === 'unauthenticated') {
             router.push('/');
@@ -34,7 +76,7 @@ const Page = () => {
             console.error("Fetch error:", err);
         }
     }, [userId]);
-    console.log('setCustomers: ', setCustomers);
+    // console.log('setCustomers: ', setCustomers);
 
     useEffect(() => {
         if (userId) {
@@ -66,11 +108,15 @@ const Page = () => {
                     </div>
                     <div className="bg-white shadow rounded-xl p-4">
                         <p className="text-gray-500">Outstanding Invoices</p>
-                        <p className="text-2xl font-semibold">{outstandingInvoices.length}</p>
+                        <p className="text-2xl font-semibold">{outstandingRevenue}</p>
+                    </div>
+                    <div className="bg-white shadow rounded-xl p-4">
+                        <p className="text-gray-500">Total Outstanding Invoices</p>
+                        <p className="text-2xl font-semibold">{outstandingInvoicess.length}</p>
                     </div>
                     <div className="bg-white shadow rounded-xl p-4">
                         <p className="text-gray-500">Total Revenue</p>
-                        <p className="text-2xl font-semibold">${revenue.toLocaleString()}</p>
+                        <p className="text-2xl font-semibold">{totalRevenue}</p>
                     </div>
                 </div>
             </div>

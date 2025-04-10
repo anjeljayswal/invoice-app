@@ -11,6 +11,7 @@ const CustomerPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [visbleInvoice, setVisibleInvoice] = useState(false);
   const [invoices, setInvoices] = useState<Invoice[]>([]); // Adjust the type as needed
+  console.log('invoices: ', invoices);
   useEffect(() => {
     const fetchCustomer = async () => {
       try {
@@ -30,21 +31,21 @@ const CustomerPage = () => {
     }
   }, [id]);
 
-  useEffect(() => {
-    const fetchInvoices = async () => {
-      try {
-        const res = await fetch(`/api/invoice?customerId=${id}`);
-        if (!res.ok) throw new Error('Failed to fetch invoices');
-        const data: Invoice[] = await res.json();
-        setInvoices(data);
-      } catch (error) {
-        console.error(error);
-      }
+   // Reusable fetch function for invoices
+   const fetchInvoices = async () => {
+    try {
+      const res = await fetch(`/api/invoice?customerId=${id}`);
+      if (!res.ok) throw new Error('Failed to fetch invoices');
+      const data: Invoice[] = await res.json();
+      setInvoices(data);
+    } catch (error) {
+      console.error(error);
     }
-    if (id) {
-      fetchInvoices();
-    }
-  }, [id]);
+  };
+    // Fetch invoices on mount or when `id` changes
+    useEffect(() => {
+      if (id) fetchInvoices();
+    }, [id]);
   if (loading) return <div>Loading...</div>;
   if (!customer) return <div>Customer not found</div>;
   {/* Add Invoice Click Handler */ }
@@ -80,6 +81,8 @@ const CustomerPage = () => {
                 <p><strong>Amount:</strong> ${invoice.amount}</p>
                 <p><strong>Status:</strong> {invoice.status}</p>
                 {/* Add other fields as needed */}
+                <p><strong>Due Date:</strong> {new Date(invoice.dueDate).toLocaleDateString()}</p>
+
               </li>
             ))}
           </ul>
