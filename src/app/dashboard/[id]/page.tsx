@@ -31,8 +31,8 @@ const CustomerPage = () => {
     }
   }, [id]);
 
-   // Reusable fetch function for invoices
-   const fetchInvoices = async () => {
+  // Reusable fetch function for invoices
+  const fetchInvoices = async () => {
     try {
       const res = await fetch(`/api/invoice?customerId=${id}`);
       if (!res.ok) throw new Error('Failed to fetch invoices');
@@ -42,15 +42,30 @@ const CustomerPage = () => {
       console.error(error);
     }
   };
-    // Fetch invoices on mount or when `id` changes
-    useEffect(() => {
-      if (id) fetchInvoices();
-    }, [id]);
+  // Fetch invoices on mount or when `id` changes
+  useEffect(() => {
+    if (id) fetchInvoices();
+  }, [id]);
   if (loading) return <div>Loading...</div>;
   if (!customer) return <div>Customer not found</div>;
   {/* Add Invoice Click Handler */ }
   const handleAddInvoiceClick = () => {
     setVisibleInvoice(true);
+  };
+  const handleEdit = (id: string) => {
+    console.log("Edit invoice with ID:", id);
+    // Add your edit logic here
+  };
+
+  const handleDelete = (id: string) => {
+    console.log("Delete invoice with ID:", id);
+    // Add your delete logic here
+  };
+
+  const handlePrint = (invoice: Invoice) => {
+    console.log("Print invoice:", invoice);
+    // Example: You could open a print dialog or generate a PDF
+    window.print();
   };
   return (
     <div className="p-6">
@@ -74,18 +89,64 @@ const CustomerPage = () => {
         {invoices.length === 0 ? (
           <p>No invoices found for this customer.</p>
         ) : (
-          <ul className="space-y-4">
-            {invoices.map((invoice) => (
-              <li key={invoice.id} className="bg-white shadow rounded-xl p-4">
-                {/* <h3 className="text-lg font-semibold">{invoice.title}</h3> */}
-                <p><strong>Amount:</strong> ${invoice.amount}</p>
-                <p><strong>Status:</strong> {invoice.status}</p>
-                {/* Add other fields as needed */}
-                <p><strong>Due Date:</strong> {new Date(invoice.dueDate).toLocaleDateString()}</p>
+          // <ul className="space-y-4">
+          //   {invoices.map((invoice) => (
+          //     <li key={invoice.id} className="bg-white shadow rounded-xl p-4">
+          //       {/* <h3 className="text-lg font-semibold">{invoice.title}</h3> */}
+          //       <p><strong>Amount:</strong> Rs {invoice.amount}</p>
+          //       <p><strong>Status:</strong> {invoice.status}</p>
+          //       {/* Add other fields as needed */}
+          //       <p><strong>Due Date:</strong> {new Date(invoice.dueDate).toLocaleDateString()}</p>
 
-              </li>
-            ))}
-          </ul>
+          //     </li>
+          //   ))}
+          // </ul>
+          <table className="min-w-full bg-white shadow rounded-xl overflow-hidden">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="text-left px-6 py-3 text-sm font-semibold">ID</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold">Invoice Number</th>
+
+
+                <th className="text-left px-6 py-3 text-sm font-semibold">Amount</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold">Status</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold">Due Date</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {invoices.map((invoice) => (
+                <tr key={invoice.id}>
+                    <td className="px-6 py-4">{invoice.id.slice(0, 8)}</td>
+                  <td className="px-6 py-4">{invoice.invoiceNumber}</td>
+
+                  <td className="px-6 py-4">Rs {invoice.amount}</td>
+                  <td className="px-6 py-4">{invoice.status}</td>
+                  <td className="px-6 py-4">{new Date(invoice.dueDate).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 flex gap-2">
+                    <button
+                      onClick={() => handleEdit(invoice.id)}
+                      className="text-blue-600 hover:underline"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(invoice.id)}
+                      className="text-red-600 hover:underline"
+                    >
+                      Delete
+                    </button>
+                    <button
+                      onClick={() => handlePrint(invoice)}
+                      className="text-green-600 hover:underline"
+                    >
+                      Print
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
 
