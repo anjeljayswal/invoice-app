@@ -68,6 +68,7 @@ const Page = () => {
     }, [status, router]);
 
     const fetchUser = useCallback(async () => {
+        const start = performance.now();
         try {
             const response = await fetch(`/api/user?userId=${userId}`);
             const data = await response.json();
@@ -75,6 +76,9 @@ const Page = () => {
             setCustomers(data.customers);
         } catch (err) {
             console.error("Fetch error:", err);
+        } finally {
+            const end = performance.now();
+            console.log("API call duration:", end - start, "ms");
         }
     }, [userId]);
     // console.log('setCustomers: ', setCustomers);
@@ -97,35 +101,33 @@ const Page = () => {
     if (!session) return null;
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 flex flex-col items-center w-full justify-center">
             <h1 className="text-3xl font-bold mt-16">Dashboard</h1>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-                    <div className="bg-white shadow rounded-xl p-4">
-                        <p className="text-gray-500">Total Customers</p>
-                        <p className="text-2xl font-semibold">{customers.length}</p>
-                    </div>
-                    <div className="bg-white shadow rounded-xl p-4">
-                        <p className="text-gray-500">Outstanding Invoices</p>
-                        <p className="text-2xl font-semibold">{outstandingRevenue}</p>
-                    </div>
-                    <div className="bg-white shadow rounded-xl p-4">
-                        <p className="text-gray-500">Total Outstanding Invoices</p>
-                        <p className="text-2xl font-semibold">{outstandingInvoicess.length}</p>
-                    </div>
-                    <div className="bg-white shadow rounded-xl p-4">
-                        <p className="text-gray-500">Total Revenue</p>
-                        <p className="text-2xl font-semibold">{totalRevenue}</p>
-                    </div>
+            <div className='w-full md:px-28'>
+            <div className="grid md:grid-cols-4 grid-cols-2 gap-4 mt-4 ">
+                <div className="bg-white shadow rounded-xl p-4 bg-gradient-to-r from-indigo-100 to-purple-100">
+                    <p className="text-gray-500">Total Customers</p>
+                    <p className="text-2xl font-semibold">{customers.length}</p>
+                </div>
+                <div className="bg-white shadow rounded-xl p-4 bg-gradient-to-r from-indigo-100 to-purple-100">
+                    <p className="text-gray-500">Outstanding Invoices</p>
+                    <p className="text-2xl font-semibold">Rs {outstandingRevenue}</p>
+                </div>
+                <div className="bg-white shadow rounded-xl p-4 bg-gradient-to-r from-indigo-100 to-purple-100">
+                    <p className="text-gray-500">Total Outstanding Invoices</p>
+                    <p className="text-2xl font-semibold">{outstandingInvoicess.length}</p>
+                </div>
+                <div className="bg-white shadow rounded-xl p-4 bg-gradient-to-r from-indigo-100 to-purple-100">
+                    <p className="text-gray-500">Total Revenue</p>
+                    <p className="text-2xl font-semibold">Rs {totalRevenue}</p>
                 </div>
             </div>
-
-
-
+            </div>
+        
             {/* Customer List Header */}
-            <div className="flex items-center justify-between mt-10">
+            <div className="flex items-center justify-between mt-10 w-full md:px-28">
                 <h2 className="text-2xl font-bold">Customers</h2>
                 <button
                     className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -136,7 +138,7 @@ const Page = () => {
             </div>
 
             {/* Customer Table */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto min-w-full md:px-28">
                 <table className="min-w-full bg-white border border-gray-200 mt-2">
                     <thead>
                         <tr className="bg-gray-100 text-left">
@@ -159,7 +161,7 @@ const Page = () => {
                 </table>
             </div>
             {/* Revenue Trend Placeholder */}
-            <div className="bg-white rounded-xl shadow p-6 h-64 flex items-center justify-center text-gray-400">
+            <div className=" h-64 flex items-center justify-center  my-10 w-full md:px-28">
                 {/* Revenue trend chart goes here */}
                 <RevenueChart customers={customers} />
 

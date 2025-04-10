@@ -118,7 +118,7 @@ const RevenueChart: React.FC<Props> = ({ customers }) => {
   }, [customers]);
 
   return (
-    <div className="bg-white p-6 shadow rounded-xl">
+    <div className="w-full max-w-2xl mx-auto p-4 bg-white shadow-md rounded-lg mt-8">
       <h3 className="text-lg font-semibold mb-4">Daily Revenue Trend (Zoomable)</h3>
       <canvas ref={chartRef} />
     </div>
