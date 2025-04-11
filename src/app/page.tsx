@@ -1,13 +1,15 @@
 'use client';
 import { useSession } from "next-auth/react";
 import Link from 'next/link';
+import { useRouter } from "next/navigation";
 export default function Home() {
-  const handlesignin = () => {
-    window.location.href = "/signin";
-  };
+  
+  const router = useRouter();
+
   const handleSignup = () => {
-    window.location.href = "/signup";
+    router.push('/signup');
   };
+
   const { data: session, status } = useSession();
 
   return (

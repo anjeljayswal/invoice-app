@@ -1,6 +1,7 @@
 'use client';
 
 import { useSession, signIn, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { FC, useEffect, useState } from 'react';
 
 const Navbar: FC = () => {
@@ -14,9 +15,13 @@ const Navbar: FC = () => {
   }, []);
   if (!isMounted) return null; // Prevent hydration mismatch
 
+  
+  const router = useRouter();
+
   const handleSignIn = () => {
-    window.location.href = "/signin";
+    router.push('/signin');
   };
+
 
   const handleSignOut = () => {
     signOut({ callbackUrl: '/' });

@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Customer, Invoice } from '@/app/types/typesScript'; // Adjust the import path as needed
 import AddInvoiceForm from '@/app/component/AddInvoiceForm';
-import { fetchData } from 'next-auth/client/_utils';
 
 const CustomerPage = () => {
   const { id } = useParams();
@@ -118,8 +117,7 @@ const CustomerPage = () => {
 
   const handlePrint = (invoice: Invoice) => {
     console.log("Print invoice:", invoice);
-    // Example: You could open a print dialog or generate a PDF
-    window.print();
+   
   };
   return (
     <div className="sm:p-36 px-5 py-20">
